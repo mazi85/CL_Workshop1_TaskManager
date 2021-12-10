@@ -1,13 +1,15 @@
 package pl.coderslab.mazi85;
 
-import java.io.File;
+import org.apache.commons.lang3.ArrayUtils;
+
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class TaskManager {
@@ -43,10 +45,14 @@ public class TaskManager {
                     listTasks(dataArr);
                     break;
                 case "add":
-                    dataArr=addTask(dataArr);
+                    dataArr = addTask(dataArr);
                     break;
                 case "remove":
-                    removeTask(dataArr);
+                    try{dataArr = removeTask(dataArr);}
+                    catch (NoSuchElementException e)
+                    {
+                        System.out.println("Number is out of task border");
+                    }
                     break;
                 case "exit":
                     System.out.println(ConsoleColors.RED + "ciao!" + ConsoleColors.RESET);
@@ -61,7 +67,7 @@ public class TaskManager {
         //write
 
         try {
-            writeArrToFile(dataArr,fileName);
+            writeArrToFile(dataArr, fileName);
             System.out.println("Tasks successfully saved to file");
         } catch (IOException e) {
             System.out.println("Save error");
@@ -69,11 +75,21 @@ public class TaskManager {
 
     }
 
-    private static void removeTask(String[] dataArr) {
-        System.out.println("USUWAM");
+    private static String[] removeTask(String[] dataArr) {
+        System.out.println("Select number to remove[" + "0.." + (dataArr.length - 1) + "]: ");
+        while (!sc.hasNextInt()) {
+            System.out.println("This is not a number");
+            sc.nextLine();
+        }
+        int index = sc.nextInt();
+        sc.nextLine();
+        if (index >= 0 && index < dataArr.length) {
+            String[] modifiedArrTask = ArrayUtils.remove(dataArr, index);
+            return modifiedArrTask;
+        } else throw new NoSuchElementException("Number is out of task list");
     }
 
-    private static String[]  addTask(String[] dataArr) {
+    private static String[] addTask(String[] dataArr) {
         StringBuilder sb = new StringBuilder();
         System.out.println("Add task description: ");
         sb.append(sc.nextLine()).append(", ");
@@ -82,8 +98,8 @@ public class TaskManager {
         System.out.println("Is Task is important[true/false]: ");
         sb.append(sc.nextLine());
 
-        String [] modifiedArrTask = Arrays.copyOf(dataArr,dataArr.length+1);
-        modifiedArrTask[modifiedArrTask.length-1]=sb.toString();
+        String[] modifiedArrTask = Arrays.copyOf(dataArr, dataArr.length + 1);
+        modifiedArrTask[modifiedArrTask.length - 1] = sb.toString();
         return modifiedArrTask;
 
     }
