@@ -1,23 +1,30 @@
 package pl.coderslab.mazi85;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TaskManager {
 
     public static final double APP_VER = 0.1;
+    private static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         System.out.println(ConsoleColors.RED + APP_VER + ConsoleColors.RESET);
         String fileName = "tasks.csv";
         String[] menu = {"list", "add", "remove", "exit"};
         String[] dataArr;
-        Scanner sc = new Scanner(System.in);
+
         String option;
 
+
+        //file load
         try {
             dataArr = readDataFileToArr(fileName);
             System.out.println("data load successfully");
@@ -26,20 +33,20 @@ public class TaskManager {
             dataArr = new String[0];
         }
 
-
+        // menu main app
         do {
             printMenu(menu);
             option = sc.nextLine();
 
             switch (option) {
                 case "list":
-                    listOption();
+                    listTasks(dataArr);
                     break;
                 case "add":
-                    addOption();
+                    dataArr=addTask(dataArr);
                     break;
                 case "remove":
-                    removeOption();
+                    removeTask(dataArr);
                     break;
                 case "exit":
                     System.out.println(ConsoleColors.RED + "ciao!" + ConsoleColors.RESET);
@@ -51,20 +58,44 @@ public class TaskManager {
 
         } while (!(option.equals("exit")));
 
+        //write
+
+        try {
+            writeArrToFile(dataArr,fileName);
+            System.out.println("Tasks successfully saved to file");
+        } catch (IOException e) {
+            System.out.println("Save error");
+        }
 
     }
 
-    private static void removeOption() {
+    private static void removeTask(String[] dataArr) {
         System.out.println("USUWAM");
     }
 
-    private static void addOption() {
-        System.out.println("DODAJĘ");
+    private static String[]  addTask(String[] dataArr) {
+        StringBuilder sb = new StringBuilder();
+        System.out.println("Add task description: ");
+        sb.append(sc.nextLine()).append(", ");
+        System.out.println("Add task due date[dd-mm-yyyy]: ");
+        sb.append(sc.nextLine()).append(", ");
+        System.out.println("Is Task is important[true/false]: ");
+        sb.append(sc.nextLine());
+
+        String [] modifiedArrTask = Arrays.copyOf(dataArr,dataArr.length+1);
+        modifiedArrTask[modifiedArrTask.length-1]=sb.toString();
+        return modifiedArrTask;
 
     }
 
-    private static void listOption() {
-        System.out.println("LISTUJĘ");
+    private static void listTasks(String[] dataArr) {
+        StringBuilder sb;
+        for (int i = 0; i < dataArr.length; i++) {
+            sb = new StringBuilder();
+            sb.append(i).append(". ").append(dataArr[i]);
+            System.out.println(sb);
+        }
+
     }
 
     private static void printMenu(String[] menu) {
@@ -84,4 +115,13 @@ public class TaskManager {
         return sb.toString().split("@@@");
     }
 
+
+    private static void writeArrToFile(String[] dataArr, String fileName) throws IOException {
+
+        FileWriter fw = new FileWriter(Paths.get(fileName).toFile());
+        for (String s : dataArr) {
+            fw.write(s + "\n");
+        }
+        fw.close();
+    }
 }
