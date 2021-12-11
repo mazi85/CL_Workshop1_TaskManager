@@ -48,7 +48,7 @@ public class TaskManager {
                     listTasks(taskArray);
                     break;
                 case "add":
-                    //taskArray = addTask(taskArray);
+                    taskArray = addTask(taskArray);
                     break;
                 case "remove":
                     try {
@@ -92,17 +92,17 @@ public class TaskManager {
         } else throw new NoSuchElementException("Number is out of task list");
     }
 
-    private static String[] addTask(String[] dataArr) {
+    private static String[][] addTask(String[][] dataArr) {
         StringBuilder sb = new StringBuilder();
         System.out.println("Add task description: ");
-        sb.append(sc.nextLine()).append(", ");
+        sb.append(sc.nextLine()).append(",");
         System.out.println("Add task due date[dd-mm-yyyy]: ");
-        sb.append(sc.nextLine()).append(", ");
+        sb.append(sc.nextLine()).append(",");
         System.out.println("Is Task is important[true/false]: ");
         sb.append(sc.nextLine());
 
-        String[] modifiedArrTask = Arrays.copyOf(dataArr, dataArr.length + 1);
-        modifiedArrTask[modifiedArrTask.length - 1] = sb.toString();
+        String[][] modifiedArrTask = Arrays.copyOf(dataArr, dataArr.length + 1);
+        modifiedArrTask[modifiedArrTask.length - 1] = sb.toString().split(",");
         return modifiedArrTask;
 
     }
@@ -121,7 +121,7 @@ public class TaskManager {
     }
 
     private static void printMenu(String[] menu) {
-        System.out.println(ConsoleColors.BLUE + "Choose an option: " + ConsoleColors.RESET);
+        System.out.println("\n" + ConsoleColors.BLUE + "Choose an option: " + ConsoleColors.RESET);
         for (String s : menu) {
             System.out.println(s);
         }
@@ -138,6 +138,9 @@ public class TaskManager {
 
         for (int i = 0; i < taskArray.length; i++) {
             taskArray[i] = strings.get(i).split(",");
+            for (int j = 0; j < taskArray[i].length; j++) {
+                taskArray[i][j]=taskArray[i][j].trim();
+            }
         }
         return taskArray;
     }
