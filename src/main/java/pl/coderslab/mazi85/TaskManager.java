@@ -9,8 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import static java.lang.String.valueOf;
 
 public class TaskManager {
 
@@ -21,18 +24,18 @@ public class TaskManager {
         System.out.println(ConsoleColors.RED + APP_VER + ConsoleColors.RESET);
         String fileName = "tasks.csv";
         String[] menu = {"list", "add", "remove", "exit"};
-        String[] dataArr;
+        String[][] taskArray;
 
         String option;
 
 
         //file load
         try {
-            dataArr = readDataFileToArr(fileName);
+            taskArray = readDataFileToArr(fileName);
             System.out.println("data load successfully");
         } catch (IOException e) {
             System.out.println("Can't load data file. Create new empty data base");
-            dataArr = new String[0];
+            taskArray = new String[0][0];
         }
 
         // menu main app
@@ -42,15 +45,15 @@ public class TaskManager {
 
             switch (option) {
                 case "list":
-                    listTasks(dataArr);
+                    listTasks(taskArray);
                     break;
                 case "add":
-                    dataArr = addTask(dataArr);
+                    //taskArray = addTask(taskArray);
                     break;
                 case "remove":
-                    try{dataArr = removeTask(dataArr);}
-                    catch (NoSuchElementException e)
-                    {
+                    try {
+                        //taskArray = removeTask(taskArray);
+                    } catch (NoSuchElementException e) {
                         System.out.println("Number is out of task border");
                     }
                     break;
@@ -66,12 +69,12 @@ public class TaskManager {
 
         //write
 
-        try {
-            writeArrToFile(dataArr, fileName);
-            System.out.println("Tasks successfully saved to file");
-        } catch (IOException e) {
-            System.out.println("Save error");
-        }
+//        try {
+//            writeArrToFile(taskArray, fileName);
+//            System.out.println("Tasks successfully saved to file");
+//        } catch (IOException e) {
+//            System.out.println("Save error");
+//        }
 
     }
 
@@ -104,12 +107,15 @@ public class TaskManager {
 
     }
 
-    private static void listTasks(String[] dataArr) {
+    private static void listTasks(String[][] dataArr) {
         StringBuilder sb;
         for (int i = 0; i < dataArr.length; i++) {
             sb = new StringBuilder();
-            sb.append(i).append(". ").append(dataArr[i]);
-            System.out.println(sb);
+            sb.append(i).append(". ");
+            for (int j = 0; j < dataArr[i].length; j++) {
+                sb.append(dataArr[i][j]).append(", ");
+            }
+            System.out.println(sb.delete(sb.length()-2,sb.length()-1));
         }
 
     }
@@ -121,14 +127,19 @@ public class TaskManager {
         }
     }
 
-    private static String[] readDataFileToArr(String fileName) throws IOException {
+    private static String[][] readDataFileToArr(String fileName) throws IOException {
 
         Path filePath = Paths.get(fileName);
-        var sb = new StringBuilder();
-        for (String line : Files.readAllLines(filePath)) {
-            sb.append(line).append("@@@");
+        String[][] taskArray;
+        List<String> strings = Files.readAllLines(filePath);
+
+
+        taskArray = new String[strings.size()][strings.get(0).split(",").length];
+
+        for (int i = 0; i < taskArray.length; i++) {
+            taskArray[i] = strings.get(i).split(",");
         }
-        return sb.toString().split("@@@");
+        return taskArray;
     }
 
 
