@@ -52,7 +52,7 @@ public class TaskManager {
                     break;
                 case "remove":
                     try {
-                        //taskArray = removeTask(taskArray);
+                        taskArray = removeTask(taskArray);
                     } catch (NoSuchElementException e) {
                         System.out.println("Number is out of task border");
                     }
@@ -78,8 +78,8 @@ public class TaskManager {
 
     }
 
-    private static String[] removeTask(String[] dataArr) {
-        System.out.println("Select number to remove[" + "0.." + (dataArr.length - 1) + "]: ");
+    private static String[][] removeTask(String[][] dataArr) {
+        System.out.println("Select number to remove(" + "0.." + (dataArr.length) + ">: ");
         while (!sc.hasNextInt()) {
             System.out.println("This is not a number");
             sc.nextLine();
@@ -87,7 +87,7 @@ public class TaskManager {
         int index = sc.nextInt();
         sc.nextLine();
         if (index >= 0 && index < dataArr.length) {
-            String[] modifiedArrTask = ArrayUtils.remove(dataArr, index);
+            String[][] modifiedArrTask = ArrayUtils.remove(dataArr, index);
             return modifiedArrTask;
         } else throw new NoSuchElementException("Number is out of task list");
     }
