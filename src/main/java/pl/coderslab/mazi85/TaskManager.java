@@ -69,12 +69,12 @@ public class TaskManager {
 
         //write
 
-//        try {
-//            writeArrToFile(taskArray, fileName);
-//            System.out.println("Tasks successfully saved to file");
-//        } catch (IOException e) {
-//            System.out.println("Save error");
-//        }
+        try {
+            writeArrToFile(taskArray, fileName);
+            System.out.println("Tasks successfully saved to file");
+        } catch (IOException e) {
+            System.out.println("Save error");
+        }
 
     }
 
@@ -146,11 +146,19 @@ public class TaskManager {
     }
 
 
-    private static void writeArrToFile(String[] dataArr, String fileName) throws IOException {
+    private static void writeArrToFile(String[][] dataArr, String fileName) throws IOException {
 
         FileWriter fw = new FileWriter(Paths.get(fileName).toFile());
-        for (String s : dataArr) {
-            fw.write(s + "\n");
+
+        StringBuilder sb;
+        for (int i = 0; i < dataArr.length; i++) {
+            sb = new StringBuilder();
+            sb.append(i).append(". ");
+            for (int j = 0; j < dataArr[i].length; j++) {
+                sb.append(dataArr[i][j]).append(", ");
+            }
+            sb.delete(sb.length()-2,sb.length()-1).append("\n");
+            fw.write(sb.toString());
         }
         fw.close();
     }
